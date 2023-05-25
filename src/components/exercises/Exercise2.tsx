@@ -1,14 +1,22 @@
-import { FC, useState } from "react";
+import { FC, useMemo, useState } from "react";
 import { Exercise2Type } from "../../types/ExercisesType";
 import { RangeMode } from "../../types/RangeType";
 import Range from "../range/Range";
+import { sortRangeNumbers } from "../../helpers/utils";
 
 const Exercise2: FC<Exercise2Type> = ({ rangeValues }) => {
-  const [value, onChange] = useState<number>(rangeValues[0]);
+  const points = useMemo(() => sortRangeNumbers(rangeValues), [rangeValues]);
+  const [value, onChange] = useState<number[]>([
+    points[0],
+    points[points.length - 1],
+  ]);
+  const [start, end] = value;
 
   return (
     <section className="content-center">
-      <span>{value}</span>
+      <span className="value-text">
+        [{start} - {end}]
+      </span>
       <Range
         mode={RangeMode.RANGE}
         {...{ value, onChange }}

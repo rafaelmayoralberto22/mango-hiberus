@@ -1,8 +1,8 @@
 export type RangeType = {
   mode?: RangeMode;
   config: RangeConfig;
-  value: number;
-  onChange: (value: number) => void;
+  value: number[];
+  onChange: (value: number[]) => void;
 };
 
 export type RangeConfig = {

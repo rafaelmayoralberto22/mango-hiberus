@@ -1,13 +1,16 @@
 import { FC } from "react";
+import { generateRangeNumber, mapLabelEuro } from "../../helpers/utils";
 import { RangeNormalType } from "../../types/RangeNormalType";
+import RangeSlider from "./RangeSlider";
 
-const RangeNormal: FC<RangeNormalType> = ({ value, max, min, onChange }) => {
+const RangeNormal: FC<RangeNormalType> = (props) => {
+  const { min, max } = props;
   return (
-    <div className="range">
-      <span className="bullet1"></span>
-      <div className="slider"></div>
-      <span className="bullet2"></span>
-    </div>
+    <RangeSlider
+      {...props}
+      points={generateRangeNumber(min, max)}
+      mapLabel={mapLabelEuro}
+    />
   );
 };
 
