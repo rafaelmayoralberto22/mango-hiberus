@@ -1,0 +1,29 @@
+header.home {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  h1 {
+    font-size: 8em;
+    font-weight: bold;
+  }
+  nav {
+    ul {
+      display: flex;
+      li {
+        list-style: none;
+        padding: 5px 30px;
+        font-size: 3em;
+        a {
+          text-decoration: none;
+          transition: all 0.5s;
+          color: #000;
+          &:hover {
+            color: #3f51b5;
+          }
+        }
+      }
+    }
+  }
+}

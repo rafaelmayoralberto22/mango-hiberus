@@ -1,9 +1,7 @@
+import Home from "../components/home";
+
 const Page = () => {
-    return (
-      <div>
-        <h1>Mango Test!</h1>
-      </div>
-    );
-  };
-  
-  export default Page;
+  return <Home />;
+};
+
+export default Page;
