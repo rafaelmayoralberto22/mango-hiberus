@@ -1,9 +1,5 @@
 header.home {
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+  @extend .content-center;
   h1 {
     font-size: 8em;
     font-weight: bold;
