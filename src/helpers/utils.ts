@@ -25,9 +25,10 @@ export const getCurrentValuePixel = (
   points: number[],
   slider: number
 ): CurrentValuePixelType[] => {
+  const reverse = JSON.parse(JSON.stringify(points)).reverse();
   const sliderPercent = slider / points.length;
   let before: Coordinates | null = null;
-  const right = points.map((item) => {
+  return points.map((item, index: number) => {
     const coor: Coordinates = before
       ? {
           x: before.y + 0.000000001,
@@ -38,17 +39,11 @@ export const getCurrentValuePixel = (
           y: sliderPercent,
         };
 
-    const value = { ...coor, valueL: item };
+    const value = { ...coor, valueL: item, valueR: reverse[index] };
     before = value;
 
     return value;
   });
-
-  return JSON.parse(JSON.stringify(points))
-    .reverse()
-    .map((item: Partial<CurrentValuePixelType>, index: number) => {
-      return { ...right[index], valueR: item };
-    });
 };
 
 export const getValuePixelLeft = (

@@ -18,8 +18,10 @@ const RangeSlider: FC<RangeSliderType> = ({
   const [start, end] = useDeferredValue(current);
   const [pixelPoint, setPixelPoint] = useState<CurrentValuePixelType[]>([]);
   const sliderRef = useRef<HTMLDivElement | null>(null);
-  const bulletLeftRef = useRef<HTMLDivElement | null>(null);
-  const bulletRightRef = useRef<HTMLDivElement | null>(null);
+  const bulletLeftRef = useRef<HTMLButtonElement | null>(null);
+  const bulletRightRef = useRef<HTMLButtonElement | null>(null);
+  const minText = String(mapLabel?.(min) ?? min);
+  const maxText = String(mapLabel?.(max) ?? max);
 
   useEffect(() => {
     const slider = sliderRef.current;
@@ -69,6 +71,8 @@ const RangeSlider: FC<RangeSliderType> = ({
     document.removeEventListener("mousemove", bulletMoveLeft);
     document.removeEventListener("mousemove", bulletMoveRight);
     document.removeEventListener("mouseup", mouseUp);
+    bulletLeftRef.current?.blur();
+    bulletRightRef.current?.blur();
   };
 
   const onMouseDownLeft = () => {
@@ -82,24 +86,50 @@ const RangeSlider: FC<RangeSliderType> = ({
   };
 
   return (
-    <div className="range-slider">
-      <span className="text-extremes">{mapLabel?.(min) ?? min}</span>
+    <div
+      className="range-slider"
+      aria-label="Range"
+      aria-valuemin={min}
+      aria-valuemax={max}
+      aria-describedby={`This control allows you to select a value between ${min} and ${max}.`}
+    >
+      <span
+        className="text-extremes"
+        aria-readonly="true"
+        aria-label={minText}
+        title={maxText}
+      >
+        {minText}
+      </span>
 
       <div className="slider" ref={sliderRef}>
-        <div
+        <button
           className="bullet bullet-left"
+          aria-label="Bullet Left"
           ref={bulletLeftRef}
           onMouseDown={onMouseDownLeft}
+          tabIndex={0}
         />
-        <div className="slider-bar"></div>
-        <div
+
+        <div className="slider-bar" />
+
+        <button
           className="bullet bullet-right"
+          aria-label="Bullet Right"
           ref={bulletRightRef}
           onMouseDown={onMouseDownRight}
+          tabIndex={0}
         />
       </div>
 
-      <span className="text-extremes">{mapLabel?.(max) ?? max}</span>
+      <span
+        className="text-extremes"
+        aria-readonly="true"
+        aria-label={maxText}
+        title={maxText}
+      >
+        {maxText}
+      </span>
     </div>
   );
 };
