@@ -1,5 +1,5 @@
 import { RangeType } from "./RangeType";
 
-export type RangeFixedType = Pick<RangeType, "value" | "onChange"> & {
+export type RangeFixedType = Pick<RangeType, "onChange"> & {
   rangeValues: number[];
 };

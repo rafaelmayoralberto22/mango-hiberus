@@ -1,7 +1,17 @@
+import { FC } from "react";
 import Exercise1 from "../components/exercises/Exercise1";
+import RangeService from "../services/RangeService";
+import { Exercise1Type } from "../types/ExercisesType";
 
-const PageExecise1 = () => {
-  return <Exercise1 min={200} max={500} />;
+const PageExecise1: FC<Exercise1Type> = (props) => {
+  return <Exercise1 {...props} />;
+};
+
+export const getServerSideProps = async () => {
+  const { min, max } = await RangeService.getMinMax();
+  return {
+    props: { min, max },
+  };
 };
 
 export default PageExecise1;

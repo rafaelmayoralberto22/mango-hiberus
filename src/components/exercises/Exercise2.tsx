@@ -1,8 +1,8 @@
 import { FC, useMemo, useState } from "react";
+import { sortRangeNumbers } from "../../helpers/utils";
 import { Exercise2Type } from "../../types/ExercisesType";
 import { RangeMode } from "../../types/RangeType";
 import Range from "../range/Range";
-import { sortRangeNumbers } from "../../helpers/utils";
 
 const Exercise2: FC<Exercise2Type> = ({ rangeValues }) => {
   const points = useMemo(() => sortRangeNumbers(rangeValues), [rangeValues]);
@@ -19,7 +19,7 @@ const Exercise2: FC<Exercise2Type> = ({ rangeValues }) => {
       </span>
       <Range
         mode={RangeMode.RANGE}
-        {...{ value, onChange }}
+        {...{ onChange }}
         config={{ rangeValues }}
       />
     </section>

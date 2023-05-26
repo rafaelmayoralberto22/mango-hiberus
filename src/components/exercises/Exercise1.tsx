@@ -11,7 +11,7 @@ const Exercise1: FC<Exercise1Type> = ({ min, max }) => {
       <span className="value-text">
         [{start} - {end}]
       </span>
-      <Range {...{ value, onChange }} config={{ min, max }} />
+      <Range {...{ onChange }} config={{ min, max }} />
     </section>
   );
 };

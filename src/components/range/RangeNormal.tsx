@@ -1,9 +1,9 @@
-import { FC } from "react";
+import { FC, memo } from "react";
 import { generateRangeNumber, mapLabelEuro } from "../../helpers/utils";
 import { RangeNormalType } from "../../types/RangeNormalType";
 import RangeSlider from "./RangeSlider";
 
-const RangeNormal: FC<RangeNormalType> = (props) => {
+const RangeNormal: FC<RangeNormalType> = memo((props) => {
   const { min, max } = props;
   return (
     <RangeSlider
@@ -12,6 +12,7 @@ const RangeNormal: FC<RangeNormalType> = (props) => {
       mapLabel={mapLabelEuro}
     />
   );
-};
+});
 
+RangeNormal.displayName = "RangeNormal";
 export default RangeNormal;
