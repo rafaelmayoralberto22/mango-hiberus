@@ -49,7 +49,7 @@ const RangeSlider: FC<RangeSliderType> = ({
       const leftLimit =
         left <= 0 ? 0 : left <= rectWidthPermit ? left : rectWidthPermit;
       bulletLeft.style.left = `${leftLimit}px`;
-      setCurrent(([_, end]) => [leftLimit, end]);
+      setCurrent(([_, endSt]) => [leftLimit, endSt]);
     }
   };
 
@@ -63,7 +63,7 @@ const RangeSlider: FC<RangeSliderType> = ({
       const rightLimit =
         right <= 0 ? 0 : right <= rectWidthPermit ? right : rectWidthPermit;
       bulletRight.style.right = `${rightLimit}px`;
-      setCurrent(([start]) => [start, rightLimit]);
+      setCurrent(([initSt]) => [initSt, rightLimit]);
     }
   };
 

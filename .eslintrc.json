@@ -1,3 +1,33 @@
 {
-  "extends": "next/core-web-vitals"
+  "env": {
+    "jest": true,
+    "browser": true,
+    "es2020": true
+  },
+  "extends": [
+    "airbnb-typescript",
+    "eslint:recommended",
+    "next/core-web-vitals",
+    "plugin:jsx-a11y/recommended",
+    "plugin:@typescript-eslint/recommended",
+    "prettier"
+  ],
+  "plugins": ["jsx-a11y", "@typescript-eslint"],
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "ecmaFeatures": {
+      "jsx": true
+    },
+    "project": "./tsconfig.json"
+  },
+  "rules": {
+    "@typescript-eslint/no-unused-vars": [
+      "warn",
+      {
+        "ignoreRestSiblings": true,
+        "args": "none",
+        "destructuredArrayIgnorePattern": "^_"
+      }
+    ]
+  }
 }
