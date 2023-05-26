@@ -1,10 +1,16 @@
 import { FC } from "react";
 import Exercise1 from "../components/exercises/Exercise1";
+import Nav from "../components/nav/Nav";
 import RangeService from "../services/RangeService";
 import { Exercise1Type } from "../types/ExercisesType";
 
 const PageExecise1: FC<Exercise1Type> = (props) => {
-  return <Exercise1 {...props} />;
+  return (
+    <>
+      <Nav />
+      <Exercise1 {...props} />
+    </>
+  );
 };
 
 export const getServerSideProps = async () => {
