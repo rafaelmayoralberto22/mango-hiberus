@@ -1,7 +1,9 @@
 import "@testing-library/jest-dom";
 import {
+  calculatePixelFromValue,
   generateRangeNumber,
   getCurrentValuePixel,
+  getPosValue,
   getValuePixelLeft,
   getValuePixelRight,
   mapLabelEuro,
@@ -65,5 +67,32 @@ describe("Utils Test", () => {
     expect(items5).toEqual(5);
     expect(items2).toEqual(2);
     expect(itemsNot).toEqual(0);
+  });
+
+  it("test calculatePixelFromValue", () => {
+    const coordinates = calculatePixelFromValue(
+      1,
+      5,
+      [0, 0],
+      strictItemsBullets
+    );
+
+    const coordinates2 = calculatePixelFromValue(
+      2,
+      3,
+      [0, 0],
+      strictItemsBullets
+    );
+
+    expect(coordinates).toStrictEqual([0, 0]);
+    expect(coordinates2).toStrictEqual([40, 80]);
+  });
+
+  it("test getPosValue", () => {
+    const pos = getPosValue(1, strictItemsBullets);
+    const pos2 = getPosValue(7, strictItemsBullets);
+
+    expect(pos).toEqual(0);
+    expect(pos2).toEqual(-1);
   });
 });

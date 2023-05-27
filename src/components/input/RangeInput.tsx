@@ -21,16 +21,12 @@ const RangeInput: FC<RangeInputType> = ({
   const [num, setNum] = useState<string>(`${value}`);
 
   useEffect(() => {
-    setNum(`${value}`);
-  }, [value, setNum]);
-
-  useEffect(() => {
     if (mode === "input" && inputRef.current) {
       inputRef.current.focus();
     } else {
       setNum(`${value}`);
     }
-  }, [mode]);
+  }, [mode, value, setNum]);
 
   const toggleMode = () => {
     setMode(mode === "label" ? "input" : "label");

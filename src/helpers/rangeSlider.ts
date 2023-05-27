@@ -2,6 +2,7 @@ import { CurrentValuePixelType } from "../types/CurrentValuePixelType";
 import {
   calculatePixelFromValue,
   getCurrentValuePixel,
+  getPosValue,
   getValuePixelLeft,
   getValuePixelRight,
 } from "./utils";
@@ -49,11 +50,6 @@ export const changeValue = (
     const endP = getValuePixelRight(end, pixelPoint);
     onChange([startP, endP]);
   }
-};
-
-const getPosValue = (value: number, pixelPoint: CurrentValuePixelType[]) => {
-  const pixelStart = pixelPoint.findIndex(({ valueL }) => valueL === value);
-  return pixelStart === -1 ? 0 : pixelStart;
 };
 
 export const bulletMoveLeftAction = (

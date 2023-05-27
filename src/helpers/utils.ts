@@ -84,3 +84,11 @@ export const calculatePixelFromValue = (
 
   return coordinates;
 };
+
+export const getPosValue = (
+  value: number,
+  pixelPoint: CurrentValuePixelType[]
+) => {
+  const pixelStart = pixelPoint.findIndex(({ valueL }) => valueL === value);
+  return pixelStart;
+};
