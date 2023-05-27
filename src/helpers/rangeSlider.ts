@@ -51,29 +51,38 @@ export const changeValue = (
   }
 };
 
+const getPosValue = (value: number, pixelPoint: CurrentValuePixelType[]) => {
+  const pixelStart = pixelPoint.findIndex(({ valueL }) => valueL === value);
+  return pixelStart === -1 ? 0 : pixelStart;
+};
+
 export const bulletMoveLeftAction = (
   slider: HTMLElement,
-  end: number,
+  valueEnd: number,
   event: MouseEvent,
+  pixelPoint: CurrentValuePixelType[],
   onChange: (item: number) => void
 ) => {
   const rect = slider.getBoundingClientRect();
   const left = event.clientX - rect.left;
-  const rectWidthPermit = rect.width - 20 - end;
-  const leftLimit =
-    left <= 0 ? 0 : left <= rectWidthPermit ? left : rectWidthPermit;
+  const pos = getPosValue(valueEnd, pixelPoint);
+  const end = pixelPoint[pos ? pos - 1 : pos].x;
+  const leftLimit = left <= 0 ? 0 : left < end ? left : end;
   onChange(leftLimit);
 };
 
 export const bulletMoveRightAction = (
   slider: HTMLElement,
-  start: number,
+  valueStart: number,
   event: MouseEvent,
+  pixelPoint: CurrentValuePixelType[],
   onChange: (item: number) => void
 ) => {
   const rect = slider.getBoundingClientRect();
   const right = slider.offsetWidth - (event.clientX - rect.left);
-  const rectWidthPermit = rect.width - 20 - start;
+  const pos = getPosValue(valueStart, pixelPoint);
+  const start = pixelPoint[pos !== pixelPoint.length ? pos + 1 : pos].y;
+  const rectWidthPermit = rect.width - 40 - start;
   const rightLimit =
     right <= 0 ? 0 : right <= rectWidthPermit ? right : rectWidthPermit;
   onChange(rightLimit);

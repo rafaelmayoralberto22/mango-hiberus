@@ -16,6 +16,7 @@ const RangeSlider: FC<RangeSliderType> = ({
   min,
   points,
   onlyLabel,
+  validation,
   onChange,
   mapLabel,
 }) => {
@@ -64,7 +65,7 @@ const RangeSlider: FC<RangeSliderType> = ({
     const end = currentValue.current[1];
 
     if (slider && bulletLeft) {
-      bulletMoveLeftAction(slider, end, event, (item) => {
+      bulletMoveLeftAction(slider, valueEnd, event, pixelPoint, (item) => {
         bulletLeft.style.left = `${item}px`;
         currentValue.current = [item, end];
       });
@@ -77,7 +78,7 @@ const RangeSlider: FC<RangeSliderType> = ({
     const [start] = currentValue.current;
 
     if (slider && bulletRight) {
-      bulletMoveRightAction(slider, start, event, (item) => {
+      bulletMoveRightAction(slider, valuesStart, event, pixelPoint, (item) => {
         bulletRight.style.right = `${item}px`;
         currentValue.current = [start, item];
       });
@@ -108,10 +109,6 @@ const RangeSlider: FC<RangeSliderType> = ({
     onChange(type === "START" ? [valueRef, valueEnd] : [valuesStart, valueRef]);
   };
 
-  const onMouseUpLeft = () => {};
-
-  const onMouseUpRight = () => {};
-
   return (
     <div
       className="range-slider"
@@ -125,7 +122,7 @@ const RangeSlider: FC<RangeSliderType> = ({
         value={valuesStart}
         onChange={onChangeManualValue("START")}
         min={min}
-        max={valueEnd}
+        max={validation?.maxInputStart}
         onlyLabel={onlyLabel}
       />
 
@@ -135,7 +132,6 @@ const RangeSlider: FC<RangeSliderType> = ({
           aria-label="Bullet Left"
           ref={bulletLeftRef}
           onMouseDown={onMouseDownLeft}
-          onMouseUp={onMouseUpLeft}
           tabIndex={0}
           data-testid="bullet_1"
         />
@@ -147,7 +143,6 @@ const RangeSlider: FC<RangeSliderType> = ({
           aria-label="Bullet Right"
           ref={bulletRightRef}
           onMouseDown={onMouseDownRight}
-          onMouseUp={onMouseUpRight}
           tabIndex={0}
           data-testid="bullet_2"
         />
@@ -157,7 +152,7 @@ const RangeSlider: FC<RangeSliderType> = ({
         label={maxText}
         value={valueEnd}
         onChange={onChangeManualValue("END")}
-        min={valuesStart}
+        min={validation?.minInputEnd}
         max={max}
         onlyLabel={onlyLabel}
       />

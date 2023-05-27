@@ -4,12 +4,17 @@ import { RangeNormalType } from "../../types/RangeNormalType";
 import RangeSlider from "./RangeSlider";
 
 const RangeNormal: FC<RangeNormalType> = memo((props) => {
-  const { min, max } = props;
+  const { min, max, value } = props;
+  const [valuesStart, valueEnd] = value;
   return (
     <RangeSlider
       {...props}
       points={generateRangeNumber(min, max)}
       mapLabel={mapLabelEuro}
+      validation={{
+        maxInputStart: valueEnd - 1,
+        minInputEnd: valuesStart + 1,
+      }}
     />
   );
 });
