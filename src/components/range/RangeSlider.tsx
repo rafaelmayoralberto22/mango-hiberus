@@ -29,10 +29,17 @@ const RangeSlider: FC<RangeSliderType> = ({
   const minText = String(mapLabel?.(valuesStart) ?? valuesStart);
   const maxText = String(mapLabel?.(valueEnd) ?? valueEnd);
 
+  /**
+   * este effecto ejecuta el onChange siempre que cambie los valosres de min o max
+   */
   useEffect(() => {
     onChange([min, max]);
   }, [min, max, onChange]);
 
+  /**
+   * Se calcula el espacio disponible para cada numero en el slider . ver mas información
+   *  en los comentarios de la función calculatePixelPoint
+   */
   useEffect(() => {
     const slider = sliderRef.current;
     if (slider) {
@@ -42,6 +49,11 @@ const RangeSlider: FC<RangeSliderType> = ({
     }
   }, [points]);
 
+  /**
+   * Se calcula las coordenadas que corresponden a un value (Se utiliza lanza
+   *  cuando el usuario escribe en el input). ver mas información
+   *  en los comentarios de la función calculatePixelFromValuePoint
+   */
   useEffect(() => {
     const bulletLeft = bulletLeftRef.current;
     const bulletRight = bulletRightRef.current;
@@ -59,6 +71,12 @@ const RangeSlider: FC<RangeSliderType> = ({
     );
   }, [value, onlyLabel, pixelPoint]);
 
+  /**
+   * Se realiza la acción mover el extremo izquierdo del range. ver mas información
+   *  en los comentarios de la función bulletMoveLeftAction
+   *
+   *  @param {MouseEvent} event
+   */
   const bulletMoveLeft = (event: MouseEvent) => {
     const slider = sliderRef.current;
     const bulletLeft = bulletLeftRef.current;
@@ -72,6 +90,12 @@ const RangeSlider: FC<RangeSliderType> = ({
     }
   };
 
+  /**
+   * Se realiza la acción mover el extremo derecho del range. ver mas información
+   *  en los comentarios de la función bulletMoveRightAction
+   *
+   *  @param {MouseEvent} event
+   */
   const bulletMoveRight = (event: MouseEvent) => {
     const slider = sliderRef.current;
     const bulletRight = bulletRightRef.current;
@@ -85,6 +109,9 @@ const RangeSlider: FC<RangeSliderType> = ({
     }
   };
 
+  /**
+   * Se eliminan todos los listener, ayudando al performance de la aplicación y se ejecuta el onChange
+   */
   const mouseUp = () => {
     const [start, end] = currentValue.current;
     document.removeEventListener("mousemove", bulletMoveLeft);
@@ -95,16 +122,36 @@ const RangeSlider: FC<RangeSliderType> = ({
     changeValue(start, end, pixelPoint, onChange);
   };
 
+  /**
+   * Se adicionan los listener al document, para un ves presionado con el mouse en button del extremo izquierdo del rango
+   * se pueda arrastra hasta el lugar requerido.
+   */
   const onMouseDownLeft = () => {
     document.addEventListener("mousemove", bulletMoveLeft);
     document.addEventListener("mouseup", mouseUp);
   };
 
+  /**
+   * Se adicionan los listener al document, para un ves presionado con el mouse en button del extremo derecho del rango
+   * se pueda arrastra hasta el lugar requerido.
+   */
   const onMouseDownRight = () => {
     document.addEventListener("mousemove", bulletMoveRight);
     document.addEventListener("mouseup", mouseUp);
   };
 
+  /**
+   * Ejecuta el onchange luego que el usuario entre el valor requerido.
+   *
+   * @param {"START"|"END"} type
+   *
+   *  START si es el para el botón izquierdo
+   *  END si es para el botón derecho
+   *
+   * @param {"number"} valueRef
+   *
+   *  valor introducido por el usuario
+   */
   const onChangeManualValue = (type: "START" | "END") => (valueRef: number) => {
     onChange(type === "START" ? [valueRef, valueEnd] : [valuesStart, valueRef]);
   };
