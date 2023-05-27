@@ -1,9 +1,10 @@
 import Link from "next/link";
+import { FC } from "react";
 
-const Home = () => {
+const Home: FC<{ title: string }> = ({ title }) => {
   return (
     <header className="home">
-      <h1>Mango - Hiberus Test</h1>
+      <h1>{title}</h1>
       <nav>
         <ul>
           <li>

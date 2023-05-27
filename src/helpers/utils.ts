@@ -31,13 +31,17 @@ export const getCurrentValuePixel = (
   return points.map((item, index: number) => {
     const coor: Coordinates = before
       ? {
-          x: before.y + 0.000000001,
+          x: before.y,
           y: before.y + sliderPercent,
         }
       : {
           x: 0,
           y: sliderPercent,
         };
+
+    if (index === points.length - 1) {
+      coor.y = slider;
+    }
 
     const value = { ...coor, valueL: item, valueR: reverse[index] };
     before = value;
@@ -46,11 +50,14 @@ export const getCurrentValuePixel = (
   });
 };
 
+export const findPoint = (bullet: number, points: CurrentValuePixelType[]) =>
+  points.findLast(({ x, y }) => bullet >= x && bullet <= y);
+
 export const getValuePixelLeft = (
   bullet: number,
   points: CurrentValuePixelType[]
 ) => {
-  const item = points.findLast(({ x }) => x <= bullet);
+  const item = findPoint(bullet, points);
   return item?.valueL ?? 0;
 };
 
@@ -58,6 +65,22 @@ export const getValuePixelRight = (
   bullet: number,
   points: CurrentValuePixelType[]
 ) => {
-  const item = points.findLast(({ x }) => x <= bullet);
+  const item = findPoint(bullet, points);
   return item?.valueR ?? 0;
+};
+
+export const calculatePixelFromValue = (
+  valueStart: number,
+  valueEnd: number,
+  coordinates: [number, number],
+  pixelPoint: CurrentValuePixelType[]
+) => {
+  const pixelStart = pixelPoint.find(({ valueL }) => valueL === valueStart);
+  const pixelEnd = pixelPoint.find(({ valueR }) => valueR === valueEnd);
+
+  if (pixelStart && pixelEnd) {
+    return [pixelStart.x, pixelEnd.x];
+  }
+
+  return coordinates;
 };

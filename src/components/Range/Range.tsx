@@ -4,6 +4,7 @@ import RangeFixed from "./RangeFixed";
 import RangeNormal from "./RangeNormal";
 
 const Range: FC<RangeType> = ({
+  value,
   config,
   onChange,
   mode = RangeMode.NORMAL,
@@ -11,7 +12,7 @@ const Range: FC<RangeType> = ({
   if (mode === RangeMode.RANGE) {
     return (
       <RangeFixed
-        {...{ onChange }}
+        {...{ value, onChange }}
         rangeValues={config?.rangeValues ?? [1, 100]}
       />
     );
@@ -19,7 +20,7 @@ const Range: FC<RangeType> = ({
 
   return (
     <RangeNormal
-      {...{  onChange }}
+      {...{ value, onChange }}
       min={config?.min ?? 1}
       max={config?.max ?? 100}
     />

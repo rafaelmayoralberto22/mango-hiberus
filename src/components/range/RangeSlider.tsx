@@ -1,78 +1,97 @@
-import { FC, useDeferredValue, useEffect, useRef, useState } from "react";
+import { FC, useEffect, useRef, useState } from "react";
 import {
-  getCurrentValuePixel,
-  getValuePixelLeft,
-  getValuePixelRight,
-} from "../../helpers/utils";
+  bulletMoveLeftAction,
+  bulletMoveRightAction,
+  calculatePixelFromValuePoint,
+  calculatePixelPoint,
+  changeValue,
+} from "../../helpers/rangeSlider";
 import { CurrentValuePixelType } from "../../types/CurrentValuePixelType";
 import { RangeSliderType } from "../../types/RangeSliderType";
+import RangeInput from "../input/RangeInput";
 
 const RangeSlider: FC<RangeSliderType> = ({
+  value,
   max,
   min,
   points,
+  onlyLabel,
   onChange,
   mapLabel,
 }) => {
-  const [current, setCurrent] = useState([0, 0]);
-  const [start, end] = useDeferredValue(current);
+  const [valuesStart, valueEnd] = value;
+  const currentValue = useRef<[number, number]>([0, 0]);
   const [pixelPoint, setPixelPoint] = useState<CurrentValuePixelType[]>([]);
   const sliderRef = useRef<HTMLDivElement | null>(null);
   const bulletLeftRef = useRef<HTMLButtonElement | null>(null);
   const bulletRightRef = useRef<HTMLButtonElement | null>(null);
-  const minText = String(mapLabel?.(min) ?? min);
-  const maxText = String(mapLabel?.(max) ?? max);
+  const minText = String(mapLabel?.(valuesStart) ?? valuesStart);
+  const maxText = String(mapLabel?.(valueEnd) ?? valueEnd);
+
+  useEffect(() => {
+    onChange([min, max]);
+  }, [min, max, onChange]);
 
   useEffect(() => {
     const slider = sliderRef.current;
     if (slider) {
-      const rect = slider.getBoundingClientRect();
-      setPixelPoint(getCurrentValuePixel(points, rect.width - 40));
+      calculatePixelPoint(slider, points, (item) => {
+        setPixelPoint(item);
+      });
     }
   }, [points]);
 
   useEffect(() => {
-    if (pixelPoint.length) {
-      const startP = getValuePixelLeft(start, pixelPoint);
-      const endP = getValuePixelRight(end, pixelPoint);
-      onChange([startP, endP]);
-    }
-  }, [start, end, pixelPoint, onChange]);
+    const bulletLeft = bulletLeftRef.current;
+    const bulletRight = bulletRightRef.current;
+    calculatePixelFromValuePoint(
+      value,
+      currentValue.current,
+      pixelPoint,
+      ([xStart, xEnd]) => {
+        if (bulletRight && bulletLeft) {
+          currentValue.current = [xStart, xEnd];
+          bulletLeft.style.left = `${xStart}px`;
+          bulletRight.style.right = `${xEnd}px`;
+        }
+      }
+    );
+  }, [value, onlyLabel, pixelPoint]);
 
   const bulletMoveLeft = (event: MouseEvent) => {
     const slider = sliderRef.current;
     const bulletLeft = bulletLeftRef.current;
+    const end = currentValue.current[1];
+
     if (slider && bulletLeft) {
-      const rect = slider.getBoundingClientRect();
-      const left = event.clientX - rect.left;
-      const rectWidthPermit = rect.width - 40 - end;
-      const leftLimit =
-        left <= 0 ? 0 : left <= rectWidthPermit ? left : rectWidthPermit;
-      bulletLeft.style.left = `${leftLimit}px`;
-      setCurrent(([_, endSt]) => [leftLimit, endSt]);
+      bulletMoveLeftAction(slider, end, event, (item) => {
+        bulletLeft.style.left = `${item}px`;
+        currentValue.current = [item, end];
+      });
     }
   };
 
   const bulletMoveRight = (event: MouseEvent) => {
     const slider = sliderRef.current;
     const bulletRight = bulletRightRef.current;
+    const [start] = currentValue.current;
+
     if (slider && bulletRight) {
-      const rect = slider.getBoundingClientRect();
-      const right = slider.offsetWidth - (event.clientX - rect.left);
-      const rectWidthPermit = rect.width - 40 - start;
-      const rightLimit =
-        right <= 0 ? 0 : right <= rectWidthPermit ? right : rectWidthPermit;
-      bulletRight.style.right = `${rightLimit}px`;
-      setCurrent(([initSt]) => [initSt, rightLimit]);
+      bulletMoveRightAction(slider, start, event, (item) => {
+        bulletRight.style.right = `${item}px`;
+        currentValue.current = [start, item];
+      });
     }
   };
 
   const mouseUp = () => {
+    const [start, end] = currentValue.current;
     document.removeEventListener("mousemove", bulletMoveLeft);
     document.removeEventListener("mousemove", bulletMoveRight);
     document.removeEventListener("mouseup", mouseUp);
     bulletLeftRef.current?.blur();
     bulletRightRef.current?.blur();
+    changeValue(start, end, pixelPoint, onChange);
   };
 
   const onMouseDownLeft = () => {
@@ -85,6 +104,14 @@ const RangeSlider: FC<RangeSliderType> = ({
     document.addEventListener("mouseup", mouseUp);
   };
 
+  const onChangeManualValue = (type: "START" | "END") => (valueRef: number) => {
+    onChange(type === "START" ? [valueRef, valueEnd] : [valuesStart, valueRef]);
+  };
+
+  const onMouseUpLeft = () => {};
+
+  const onMouseUpRight = () => {};
+
   return (
     <div
       className="range-slider"
@@ -93,14 +120,14 @@ const RangeSlider: FC<RangeSliderType> = ({
       aria-valuemax={max}
       aria-describedby={`This control allows you to select a value between ${min} and ${max}.`}
     >
-      <span
-        className="text-extremes"
-        aria-readonly="true"
-        aria-label={minText}
-        title={maxText}
-      >
-        {minText}
-      </span>
+      <RangeInput
+        label={minText}
+        value={valuesStart}
+        onChange={onChangeManualValue("START")}
+        min={min}
+        max={valueEnd}
+        onlyLabel={onlyLabel}
+      />
 
       <div className="slider" ref={sliderRef}>
         <button
@@ -108,7 +135,9 @@ const RangeSlider: FC<RangeSliderType> = ({
           aria-label="Bullet Left"
           ref={bulletLeftRef}
           onMouseDown={onMouseDownLeft}
+          onMouseUp={onMouseUpLeft}
           tabIndex={0}
+          data-testid="bullet_1"
         />
 
         <div className="slider-bar" />
@@ -118,18 +147,20 @@ const RangeSlider: FC<RangeSliderType> = ({
           aria-label="Bullet Right"
           ref={bulletRightRef}
           onMouseDown={onMouseDownRight}
+          onMouseUp={onMouseUpRight}
           tabIndex={0}
+          data-testid="bullet_2"
         />
       </div>
 
-      <span
-        className="text-extremes"
-        aria-readonly="true"
-        aria-label={maxText}
-        title={maxText}
-      >
-        {maxText}
-      </span>
+      <RangeInput
+        label={maxText}
+        value={valueEnd}
+        onChange={onChangeManualValue("END")}
+        min={valuesStart}
+        max={max}
+        onlyLabel={onlyLabel}
+      />
     </div>
   );
 };
