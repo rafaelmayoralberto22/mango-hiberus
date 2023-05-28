@@ -1,4 +1,4 @@
-import { FC, memo } from "react";
+import { FC, memo, useMemo } from "react";
 import { generateRangeNumber, mapLabelEuro } from "../../helpers/utils";
 import { RangeNormalType } from "../../types/RangeNormalType";
 import RangeSlider from "./RangeSlider";
@@ -6,10 +6,12 @@ import RangeSlider from "./RangeSlider";
 const RangeNormal: FC<RangeNormalType> = memo((props) => {
   const { min, max, value } = props;
   const [valuesStart, valueEnd] = value;
+  const points = useMemo(() => generateRangeNumber(min, max), [min, max]);
+
   return (
     <RangeSlider
       {...props}
-      points={generateRangeNumber(min, max)}
+      points={points}
       mapLabel={mapLabelEuro}
       validation={{
         maxInputStart: valueEnd - 1,

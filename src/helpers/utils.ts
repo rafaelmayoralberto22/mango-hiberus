@@ -150,15 +150,19 @@ export const calculatePixelFromValue = (
 
 /**
  * Obtiene la pocisión que ocupa un determinado valor seleccionado en el arreglo de puntos seleccionables.
- * 
+ *
+ * @param {"LEFT"|"RIGHT"} pos
  * @param {number} value
  * @param {CurrentValuePixelType[]} pixelPoint
  * @returns
  */
 export const getPosValue = (
+  pos: "LEFT" | "RIGHT",
   value: number,
   pixelPoint: CurrentValuePixelType[]
 ) => {
-  const pixelStart = pixelPoint.findIndex(({ valueL }) => valueL === value);
+  const pixelStart = pixelPoint.findIndex(
+    ({ valueL, valueR }) => (pos === "LEFT" ? valueL : valueR) === value
+  );
   return pixelStart;
 };

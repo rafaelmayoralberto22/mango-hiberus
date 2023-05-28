@@ -16,16 +16,13 @@ import {
  * @param {number[]}points
  * @param {(item: CurrentValuePixelType[]) => void} onChange
  */
-export const calculatePixelPoint = (
-  slider: HTMLElement,
-  points: number[],
-  onChange: (item: CurrentValuePixelType[]) => void
-) => {
+export const calculatePixelPoint = (slider: HTMLElement, points: number[]) => {
   if (slider) {
-    const rect = slider.getBoundingClientRect();
+    const rect = slider.getBoundingClientRect(); // método devuelve un DOMRect objeto que proporciona información sobre el tamaño de un elemento y su posición relativa a la ventana gráfica .
     const value = getCurrentValuePixel(points, rect.width - 40);
-    onChange(value);
+    return value;
   }
+  return [];
 };
 
 /**
@@ -96,7 +93,7 @@ export const bulletMoveLeftAction = (
 ) => {
   const rect = slider.getBoundingClientRect(); // método devuelve un DOMRect objeto que proporciona información sobre el tamaño de un elemento y su posición relativa a la ventana gráfica .
   const left = event.clientX - rect.left; // se calcula el movimiento del mouse
-  const pos = getPosValue(valueEnd, pixelPoint); // calculamos la posición de otro extremo
+  const pos = getPosValue("LEFT", valueEnd, pixelPoint); // calculamos la posición de otro extremo
   const end = pixelPoint[pos ? pos - 1 : pos].x; // obtenemos el valor de la posición anterior al otro extremo. Ejemplo si el otro extremo es 300 podria ser 299 en un conjunto de puntos consecutivos
   const leftLimit = left <= 0 ? 0 : left < end ? left : end; // evitamos la colisión siempre
   onChange(leftLimit);
@@ -121,10 +118,66 @@ export const bulletMoveRightAction = (
 ) => {
   const rect = slider.getBoundingClientRect(); // método devuelve un DOMRect objeto que proporciona información sobre el tamaño de un elemento y su posición relativa a la ventana gráfica .
   const right = slider.offsetWidth - (event.clientX - rect.left); // se calcula el movimiento del mouse
-  const pos = getPosValue(valueStart, pixelPoint); // calculamos la posición de otro extremo
-  const start = pixelPoint[pos !== pixelPoint.length ? pos + 1 : pos].y; // obtenemos el valor de la posición anterior al otro extremo. Ejemplo si el otro extremo es 1 podria ser 2 en un conjunto de puntos consecutivos
-  const rectWidthPermit = rect.width - 40 - start; // se le resta al ancho del conteneder del slider 40px (tamaño de los dos extremos), ademas se resta el tamaño de la posición que le sigue al extremo izquierdo 
-  const rightLimit =
-    right <= 0 ? 0 : right <= rectWidthPermit ? right : rectWidthPermit; // cons esta condición evitamos la colisión siempre
+  const pos = getPosValue("RIGHT", valueStart, pixelPoint); // calculamos la posición de otro extremo
+  const start = pixelPoint[pos ? pos - 1 : pos].x; // obtenemos el valor de la posición anterior al otro extremo. Ejemplo si el otro extremo es 1 podria ser 2 en un conjunto de puntos consecutivos
+  const rightLimit = right <= 0 ? 0 : right <= start ? right : start; // con esta condición evitamos la colisión siempre
   onChange(rightLimit);
+};
+
+/**
+ * Función que calcula la poición que obtendrá el extremo izquierdo al presionar la tecla ArrowLeft, Left , ArrowRight
+ * o Right. Tiene en cuenta el valor del extremo final para que no se crucen.
+ *
+ * @param {KeyboardEvent} event
+ * @param {CurrentValuePixelType[]} pixelPoint
+ * @param {number} valueStart
+ * @param {number} valueEnd
+ * @param {(item: number) => void} onChange
+ */
+export const onKeyDownDocumentLeftBullet = (
+  event: KeyboardEvent,
+  pixelPoint: CurrentValuePixelType[],
+  valueStart: number,
+  valueEnd: number,
+  onChange: (item: number) => void
+) => {
+  const postStart = getPosValue("LEFT", valueStart, pixelPoint);
+  const postEnd = getPosValue("LEFT", valueEnd, pixelPoint);
+  if (event.key === "ArrowLeft" || event.key === "Left") {
+    onChange(pixelPoint[postStart > 0 ? postStart - 1 : 0].valueL);
+  } else if (event.key === "ArrowRight" || event.key === "Right") {
+    onChange(
+      pixelPoint[postStart < postEnd - 1 ? postStart + 1 : postStart].valueL
+    );
+  }
+};
+
+/**
+ * Función que calcula la poición que obtendrá el extremo derecho al presionar la tecla ArrowLeft, Left , ArrowRight
+ * o Right. Tiene en cuenta el valor inicial para que no se crucen.
+ *
+ * @param {KeyboardEvent} event
+ * @param {CurrentValuePixelType[]} pixelPoint
+ * @param {number} valueStart
+ * @param {number} valueEnd
+ * @param {(item: number) => void} onChange
+ */
+export const onKeyDownDocumentRightBullet = (
+  event: KeyboardEvent,
+  pixelPoint: CurrentValuePixelType[],
+  valueStart: number,
+  valueEnd: number,
+  onChange: (item: number) => void
+) => {
+  const postStart = getPosValue("LEFT", valueStart, pixelPoint);
+  const postEnd = getPosValue("LEFT", valueEnd, pixelPoint);
+  if (event.key === "ArrowLeft" || event.key === "Left") {
+    onChange(
+      pixelPoint[postEnd > postStart + 1 ? postEnd - 1 : postEnd].valueL
+    );
+  } else if (event.key === "ArrowRight" || event.key === "Right") {
+    onChange(
+      pixelPoint[postEnd < pixelPoint.length - 1 ? postEnd + 1 : postEnd].valueL
+    );
+  }
 };

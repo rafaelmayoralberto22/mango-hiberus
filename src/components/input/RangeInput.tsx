@@ -44,7 +44,8 @@ const RangeInput: FC<RangeInputType> = ({
    *
    *  @param {KeyboardEvent} event
    */
-  const onKeyUp = (event: KeyboardEvent) => {
+  const onKeyDown = (event: KeyboardEvent) => {
+    event.stopPropagation();
     const isValid = (event.target as HTMLInputElement).checkValidity();
     if (event.key === "Enter" && isValid) {
       onChange(+num);
@@ -87,7 +88,7 @@ const RangeInput: FC<RangeInputType> = ({
       value={num}
       className="input-extremes"
       onChange={onChangeInternal}
-      onKeyUp={onKeyUp}
+      onKeyDown={onKeyDown}
       onBlur={onBlur}
       min={min}
       max={max}

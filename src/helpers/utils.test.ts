@@ -89,8 +89,8 @@ describe("Utils Test", () => {
   });
 
   it("test getPosValue", () => {
-    const pos = getPosValue(1, strictItemsBullets);
-    const pos2 = getPosValue(7, strictItemsBullets);
+    const pos = getPosValue("LEFT", 1, strictItemsBullets);
+    const pos2 = getPosValue("LEFT", 7, strictItemsBullets);
 
     expect(pos).toEqual(0);
     expect(pos2).toEqual(-1);
