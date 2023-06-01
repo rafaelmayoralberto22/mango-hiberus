@@ -154,8 +154,8 @@ export const useRangeSlider = ({
     const end = currentValue.current[1];
 
     if (slider && bulletLeft) {
-      document.body.style.cursor = "move";
-      bulletLeft.style.cursor = "move";
+      document.body.style.cursor = "grabbing";
+      bulletLeft.style.cursor = "grabbing";
       bulletMoveLeftAction(slider, valueEnd, event, pixelPoint, (item) => {
         bulletLeft.style.left = `${item}px`;
         currentValue.current = [item, end];
@@ -175,8 +175,8 @@ export const useRangeSlider = ({
     const [start] = currentValue.current;
 
     if (slider && bulletRight) {
-      document.body.style.cursor = "move";
-      bulletRight.style.cursor = "move";
+      document.body.style.cursor = "grabbing";
+      bulletRight.style.cursor = "grabbing";
       bulletMoveRightAction(slider, valueStart, event, pixelPoint, (item) => {
         bulletRight.style.right = `${item}px`;
         currentValue.current = [start, item];

@@ -18,10 +18,21 @@ const PageExecise1: FC<Exercise1Type> = (props) => {
 };
 
 export const getServerSideProps = async () => {
-  const { min, max } = await getMinMax();
-  return {
-    props: { min, max },
-  };
+  try {
+    const { min, max } = await getMinMax();
+    return {
+      props: { min, max },
+    };
+  } catch(e) {
+    console.log(e);
+
+    return {
+      redirect: {
+        destination: "/error",
+        permanent: false,
+      },
+    };
+  }
 };
 
 export default PageExecise1;
