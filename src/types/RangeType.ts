@@ -1,4 +1,5 @@
 import { RangeMode } from "../helpers/constants";
+
 export type RangeType = {
   value: [number, number];
   mode?: RangeMode;
