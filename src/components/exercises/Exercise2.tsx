@@ -1,6 +1,6 @@
 import { FC, useState } from "react";
+import { RangeMode } from "../../helpers/constants";
 import { Exercise2Type } from "../../types/ExercisesType";
-import { RangeMode } from "../../types/RangeType";
 import Range from "../range/Range";
 
 const Exercise2: FC<Exercise2Type> = ({ rangeValues }) => {

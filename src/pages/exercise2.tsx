@@ -2,7 +2,7 @@ import Head from "next/head";
 import { FC } from "react";
 import Exercise2 from "../components/exercises/Exercise2";
 import Nav from "../components/nav/Nav";
-import RangeService from "../services/RangeService";
+import { getMinMaxRange } from "../services/rangeService";
 import { Exercise2Type } from "../types/ExercisesType";
 
 const PageExecise2: FC<Exercise2Type> = (props) => {
@@ -18,7 +18,7 @@ const PageExecise2: FC<Exercise2Type> = (props) => {
 };
 
 export const getServerSideProps = async () => {
-  const { range } = await RangeService.getMinMaxRange();
+  const { range } = await getMinMaxRange();
   return {
     props: { rangeValues: range },
   };

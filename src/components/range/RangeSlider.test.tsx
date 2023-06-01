@@ -6,6 +6,9 @@ import RangeSlider from "./RangeSlider";
 describe("RangeSlider", () => {
   const mockOnChange = jest.fn();
 
+  const minimumText = "The minimum selected is";
+  const maximumText = "The maximum selected is";
+
   const testData = {
     max: 5,
     min: 1,
@@ -19,8 +22,8 @@ describe("RangeSlider", () => {
 
   it("renders a RangeSlider extremes", async () => {
     render(<RangeSlider {...testData} value={[1, 5]} />);
-    const minText = await screen.findByTitle(testData.min);
-    const maxText = await screen.findByTitle(testData.max);
+    const minText = await screen.findByTitle(`${minimumText} ${testData.min}`);
+    const maxText = await screen.findByTitle(`${maximumText} ${testData.max}`);
 
     expect(minText).toBeInTheDocument();
     expect(maxText).toBeInTheDocument();
@@ -30,8 +33,12 @@ describe("RangeSlider", () => {
     const mapLabel = (item: number) => `${item} USD`;
     render(<RangeSlider {...testData} mapLabel={mapLabel} value={[1, 5]} />);
 
-    const minText = await screen.findByTitle(`${testData.min} USD`);
-    const maxText = await screen.findByTitle(`${testData.max} USD`);
+    const minText = await screen.findByTitle(
+      `${minimumText} ${testData.min} USD`
+    );
+    const maxText = await screen.findByTitle(
+      `${maximumText} ${testData.max} USD`
+    );
 
     expect(minText).toBeInTheDocument();
     expect(maxText).toBeInTheDocument();
@@ -67,11 +74,15 @@ describe("RangeSlider", () => {
     const bullet1 = screen.getByTestId("bullet_1");
 
     bullet1.focus();
-    await userEvent.keyboard("[ArrowRight][ArrowRight][ArrowLeft][ArrowLeft]");
+    await userEvent.keyboard("[ArrowRight]");
+    await userEvent.keyboard("[ArrowLeft]");
+    await userEvent.keyboard("[ArrowRight]");
 
     expect(bullet1).toHaveFocus();
     expect(document.activeElement).toBe(bullet1);
-    expect(mockOnChange).toHaveBeenCalledTimes(5);
+    expect(mockOnChange).toHaveBeenCalledTimes(4);
+    expect(mockOnChange).toHaveBeenCalledWith([1, 5]);
+    expect(mockOnChange).toHaveBeenCalledWith([2, 5]);
   });
 
   it("run onchange when you press the arrow keys and the bullet 2 is in focus", async () => {
@@ -80,10 +91,15 @@ describe("RangeSlider", () => {
     const bullet2 = screen.getByTestId("bullet_2");
 
     bullet2.focus();
-    await userEvent.keyboard("[ArrowRight][ArrowRight][ArrowRight][ArrowLeft]");
+    await userEvent.keyboard("[ArrowLeft]");
+    await userEvent.keyboard("[ArrowLeft]");
+    await userEvent.keyboard("[ArrowRight]");
 
     expect(bullet2).toHaveFocus();
     expect(document.activeElement).toBe(bullet2);
-    expect(mockOnChange).toHaveBeenCalledTimes(5);
+    expect(mockOnChange).toHaveBeenCalledTimes(4);
+    expect(mockOnChange).toHaveBeenCalledWith([1, 5]);
+    expect(mockOnChange).toHaveBeenCalledWith([1, 4]);
+    expect(mockOnChange).not.toHaveBeenCalledWith([1, 3]);
   });
 });

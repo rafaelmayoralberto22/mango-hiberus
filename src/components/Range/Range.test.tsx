@@ -1,6 +1,6 @@
 import "@testing-library/jest-dom";
 import { render, screen } from "@testing-library/react";
-import { RangeMode } from "../../types/RangeType";
+import { RangeMode } from "../../helpers/constants";
 import Range from "./Range";
 
 describe("Range", () => {

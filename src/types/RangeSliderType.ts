@@ -13,3 +13,5 @@ export type ValidationInputs = {
   maxInputStart: number;
   minInputEnd: number;
 };
+
+export type RangeSliderHookType = Omit<RangeSliderType, "validation">;

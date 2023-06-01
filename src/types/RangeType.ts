@@ -1,3 +1,4 @@
+import { RangeMode } from "../helpers/constants";
 export type RangeType = {
   value: [number, number];
   mode?: RangeMode;
@@ -10,8 +11,3 @@ export type RangeConfig = {
   max?: number;
   rangeValues?: number[];
 };
-
-export enum RangeMode {
-  NORMAL = "normal",
-  RANGE = "range",
-}

@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef } from "react";
+import { RangePosition } from "../helpers/constants";
 import {
   bulletMoveLeftAction,
   bulletMoveRightAction,
@@ -7,8 +8,32 @@ import {
   onKeyDownDocumentLeftBullet,
   onKeyDownDocumentRightBullet,
 } from "../helpers/rangeSlider";
+import { RangeSliderHookType } from "../types/RangeSliderType";
 import { useCalculatePixelPoint } from "./useCalculatePixelPoint";
 
+/**
+ * Este hook es el encargado de todo el funcionamiento del RangeSlider
+ *
+ * @param {RangeSliderHookType} event
+ *  min: número minimo del slider
+ *  max: número máximo del slider
+ *  value: valor actual del slider
+ *  points: valores permitidos en el slider
+ *  onlyLabel: "opcional" -> permite dejar el label fijo y no permitir que el mismo pueda convertirse en input
+ *  mapLabel: "opcional" -> permite cambiar lo que se va a mostrar en los label de los extremos
+ *  onChange: función encargada de ejecutar el cambio del slider.
+ *
+ * @returns
+ *  minText: texto del valor minimo seleccionado en el slider
+ *  valueStart: texto del valor máximo seleccionado en el slider
+ *  valueEnd: valor máximo seleccionado en el slider
+ *  sliderRef: referencia al slider
+ *  bulletLeftRef: referencia al extremo izquierdo
+ *  bulletRightRef: referencia al extremo derecho
+ *  onMouseDownLeft: acción para cuando presionen el botón izquierdo
+ *  onMouseDownRight: acción para cuando presionen el botón derecho
+ *  onChangeManualValue: acción para cuando el usuario introduzca un valor en los input
+ */
 export const useRangeSlider = ({
   min,
   max,
@@ -17,15 +42,7 @@ export const useRangeSlider = ({
   onlyLabel,
   mapLabel,
   onChange,
-}: {
-  min: number;
-  max: number;
-  value: [number, number];
-  points: number[];
-  onlyLabel?: boolean;
-  onChange: (value: [number, number]) => void;
-  mapLabel?: (item: number) => string;
-}) => {
+}: RangeSliderHookType) => {
   const [valueStart, valueEnd] = value;
   const currentValue = useRef<[number, number]>([0, 0]);
   const sliderRef = useRef<HTMLDivElement | null>(null);
@@ -137,6 +154,8 @@ export const useRangeSlider = ({
     const end = currentValue.current[1];
 
     if (slider && bulletLeft) {
+      document.body.style.cursor = "move";
+      bulletLeft.style.cursor = "move";
       bulletMoveLeftAction(slider, valueEnd, event, pixelPoint, (item) => {
         bulletLeft.style.left = `${item}px`;
         currentValue.current = [item, end];
@@ -156,6 +175,8 @@ export const useRangeSlider = ({
     const [start] = currentValue.current;
 
     if (slider && bulletRight) {
+      document.body.style.cursor = "move";
+      bulletRight.style.cursor = "move";
       bulletMoveRightAction(slider, valueStart, event, pixelPoint, (item) => {
         bulletRight.style.right = `${item}px`;
         currentValue.current = [start, item];
@@ -167,12 +188,20 @@ export const useRangeSlider = ({
    *Se eliminan todos los listener, ayudando al performance de la aplicación y se ejecuta el onChange
    */
   const mouseUp = () => {
+    const bulletRight = bulletRightRef.current;
+    const bulletLeft = bulletLeftRef.current;
     const [start, end] = currentValue.current;
     document.removeEventListener("mousemove", bulletMoveLeft);
     document.removeEventListener("mousemove", bulletMoveRight);
     document.removeEventListener("mouseup", mouseUp);
-    bulletLeftRef.current?.blur();
-    bulletRightRef.current?.blur();
+
+    if (bulletRight && bulletLeft) {
+      bulletLeft.blur();
+      bulletRight.blur();
+      bulletLeft.style.cursor = "grab";
+      bulletRight.style.cursor = "grab";
+      document.body.style.cursor = "default";
+    }
     changeValue(start, end, pixelPoint, onChange);
   };
 
@@ -197,7 +226,7 @@ export const useRangeSlider = ({
   /**
    *Ejecuta el onchange luego que el usuario entre el valor requerido.
    *
-   * @param {"START"|"END"} type
+   * @param {RangePosition} type
    *
    *  START si es el para el botón izquierdo
    *  END si es para el botón derecho
@@ -206,8 +235,12 @@ export const useRangeSlider = ({
    *
    *  valor introducido por el usuario
    */
-  const onChangeManualValue = (type: "START" | "END") => (valueRef: number) => {
-    onChange(type === "START" ? [valueRef, valueEnd] : [valueStart, valueRef]);
+  const onChangeManualValue = (type: RangePosition) => (valueRef: number) => {
+    onChange(
+      type === RangePosition.START
+        ? [valueRef, valueEnd]
+        : [valueStart, valueRef]
+    );
   };
 
   return {

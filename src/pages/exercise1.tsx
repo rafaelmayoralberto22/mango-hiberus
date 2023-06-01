@@ -2,7 +2,7 @@ import Head from "next/head";
 import { FC } from "react";
 import Exercise1 from "../components/exercises/Exercise1";
 import Nav from "../components/nav/Nav";
-import RangeService from "../services/RangeService";
+import { getMinMax } from "../services/rangeService";
 import { Exercise1Type } from "../types/ExercisesType";
 
 const PageExecise1: FC<Exercise1Type> = (props) => {
@@ -18,7 +18,7 @@ const PageExecise1: FC<Exercise1Type> = (props) => {
 };
 
 export const getServerSideProps = async () => {
-  const { min, max } = await RangeService.getMinMax();
+  const { min, max } = await getMinMax();
   return {
     props: { min, max },
   };

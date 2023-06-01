@@ -2,6 +2,16 @@ import { MutableRefObject, useEffect, useState } from "react";
 import { calculatePixelPoint } from "../helpers/rangeSlider";
 import { CurrentValuePixelType } from "../types/CurrentValuePixelType";
 
+/**
+ * Calcula el espacio disponible para cada punto dentro slider 
+ * 
+ * @param {MutableRefObject<HTMLDivElement | null>} ref 
+ * referencia al div que contiene le slider.
+ * 
+ * @param {number[]} points 
+ * valores posibles del slider
+ * @returns 
+ */
 export const useCalculatePixelPoint = (
   ref: MutableRefObject<HTMLDivElement | null>,
   points: number[]
