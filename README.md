@@ -6,7 +6,7 @@ Mango frontend technical test
 
 ## Installation and commissioning:
 
-Clone this repository. You need `node` and `npm` installed globally on your machine.
+Clone this repository. You need `node v18.14.2` and `npm` installed globally on your machine.
 
 #### Installation:
 
